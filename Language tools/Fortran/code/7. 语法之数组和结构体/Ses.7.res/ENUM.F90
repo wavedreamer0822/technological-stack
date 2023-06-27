@@ -1,0 +1,51 @@
+PROGRAM WWW_FCODE_CN
+    IMPLICIT NONE
+
+!ENUM WEEKDAY
+    INTEGER,PARAMETER:: SUN=0,MON=1,TUE=2,WED=3,THU=4,FRI=5,SAT=6
+
+!USER INPUTS AN INTEGER,THEN PRINT THE WEEKDAY NAME AND OTHER INFORMATIONS.
+    INTEGER:: WKDAY,IERR
+
+    DO
+        WRITE(*,*)"PLEASE INPUT AN INTEGER NUMBER:"
+        READ(*,*)WKDAY
+        IERR=0
+
+        SELECT CASE (WKDAY)
+        CASE(SUN)
+            PRINT *,WKDAY,"IS SUNDAY"
+        CASE(MON)
+            PRINT *,WKDAY,"IS MONDAY"
+        CASE(TUE)
+            PRINT *,WKDAY,"IS TUESDAY"
+        CASE(WED)
+            PRINT *,WKDAY,"IS WEDNESDAY"
+        CASE(THU)
+            PRINT *,WKDAY,"IS THURSDAY"
+        CASE(FRI)
+            PRINT *,WKDAY,"IS FRIDAY"
+        CASE(SAT)
+            PRINT *,WKDAY,"IS SATURDAY "
+        CASE DEFAULT
+            PRINT *,"ARE YOU MARTIAN ?"
+            IERR=1
+            EXIT
+        END SELECT
+        IF(IERR/=0)EXIT
+
+        SELECT CASE (WKDAY)
+        CASE(MON:FRI)
+            PRINT *,WKDAY,"IS WORKDAY"
+        CASE(SUN,SAT)
+            PRINT *,WKDAY,"IS WEEKEND"
+        CASE DEFAULT
+            PRINT *,"ARE YOU MARTIAN ?"
+            EXIT
+        END SELECT
+    ENDDO
+
+    PRINT *,"PROGRAM TERMINATED"
+    STOP
+
+END PROGRAM WWW_FCODE_CN
