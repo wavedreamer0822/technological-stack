@@ -1,0 +1,71 @@
+// Runge-Kutta high order : 定义控制台应用程序的入口点。
+// to solve inital value diffential equations y1'(t)=f1(x,y1,y2), y2'(t)=f2(x,y1,y2) .
+//here only two equations involved
+//Actually the two equations is derived from a higher order differential equation
+//y''(t)=f(x,y,y'),in this case y''(t)=2y'-2y+exp(2x)*sinx.
+
+
+#include "stdafx.h"
+#include<math.h>
+#include<stdlib.h>
+#include<stdio.h>
+
+void main ( )
+{
+   double *y, *yex,a,b,h,*err,*k1,*k2,*k3,*k4;
+   double * (*funpt)(double x, double y1, double y2);  //指向指针的指针
+   int i,j,N;
+   double * yexact(double x);
+   double *f(double x, double y1, double y2);
+
+   a=0.0;
+   b=1.0;
+   N=10; 
+   h=(b-a)/N;
+   y=(double *)malloc(sizeof(double)*3);
+  
+   y[1]=-0.4;
+   y[2]=-0.6;
+   err=(double *)malloc(sizeof(double)*3);
+   for(i=0;i<N;i++)
+   {
+
+	   yex=yexact(a+(i+1)*h);
+	   funpt=f;
+	   k1=(* funpt)(a+i*h,y[1],y[2]);   
+	   k2=(* funpt)(a+i*h+0.5*h, y[1]+0.5*h*k1[0], y[2]+0.5*h*k1[1]);  
+	   k3=(* funpt)(a+i*h+0.5*h, y[1]+0.5*h*k2[0], y[2]+0.5*h*k2[1]);
+	   k4=(* funpt)(a+(i+1)*h, y[1]+h*k3[0], y[2]+h*k3[1]);
+
+	   for(j=1;j<3;j++)
+	   {
+	      y[j]=y[j]+h*(k1[j-1]+2*k2[j-1]+2*k3[j-1]+k4[j-1])/6.0;   
+	      err[j]=fabs(yex[j]-y[j]);
+	   }
+	   
+	   printf("error at %.2f =%e\n",a+(i+1)*h,err[1]);
+	   free(yex);
+   }
+   free(y);	  
+}
+
+
+
+double * yexact(double x)
+{
+	double *z;
+	z=(double *)malloc(sizeof(double)*3);
+	z[0]=0;//it is useless 
+	z[1]=0.2*exp(2*x)*(sin(x)-2*cos(x));
+	z[2]=0.2*exp(2*x)*(4*sin(x)-3*cos(x));
+	return z;
+}
+	
+double * f(double x, double y1, double y2)
+{
+	double *z;
+	z=(double *)malloc(sizeof(double)*2);
+	z[0]=y2;
+	z[1]=exp(2*x)*sin(x)-2*y1+2*y2;
+	return z;
+}

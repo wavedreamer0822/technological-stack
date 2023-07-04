@@ -1,0 +1,97 @@
+// example1.cpp : 定义控制台应用程序的入口点。
+
+#include "stdafx.h"
+#include<math.h>
+#include<stdio.h>
+#include<stdlib.h>
+
+void main( )
+{
+  double *x,*a,*b,*c,*d,*rhs,*ans,*u;
+  double A,B,h,Pi;
+  int i,j,N;
+  double * f(double * x, int N);
+  double *chase_algorithm(double *a, double *b, double *c, int n, double *d);
+  N=80;
+  Pi=3.14159265359;
+  A=0;
+  B=Pi;
+  h=(B-A)/N;
+ 
+  x=(double *)malloc(sizeof(double)*(N+1));
+  for(i=0;i<=N;i++)
+    x[i]=A+i*h;
+ 
+  rhs=f(x,N+1);
+  a=(double *)malloc(sizeof(double)*(N-1));
+  b=(double *)malloc(sizeof(double)*(N-1));
+  c=(double *)malloc(sizeof(double)*(N-1));
+  d=(double *)malloc(sizeof(double)*(N-1));
+  for(i=0;i<N-1;i++)
+  {
+	  d[i]=h*h*rhs[i+1];
+	  a[i]=1.0;
+	  b[i]=-2.0-h*h;
+	  c[i]=1.0;
+  }
+  free(rhs);
+  ans=chase_algorithm(a,b,c,N-1,d);
+  free(a);
+  free(b);
+  free(c);
+  free(d);
+  
+  u=(double *)malloc(sizeof(double)*(N+1));   //u为数值解
+  u[0]=u[N]=0;
+  for(i=1;i<N;i++)
+	  u[i]=ans[i-1];
+  free(ans);
+
+  i=N/5;
+  for(j=1;j<=4;j++)
+	 printf("x=%f=%d*Pi/5, u=%f\n",A+j*i*h,j,u[i*j]);
+
+
+  free(u);
+}
+
+
+double * f(double  * x, int N)
+{
+	int i;
+	double *ans;
+	ans=(double *)malloc(sizeof(double)*(N+1));
+	for(i=0;i<=N;i++)
+		ans[i]=exp(x[i])*(2*cos(x[i])-sin(x[i]));
+	return ans;
+}
+
+double * chase_algorithm(double *a, double *b, double *c, int n, double *d)
+{
+  double * ans,*g,*w,p;
+  int i;
+  ans=(double *)malloc(sizeof(double)*n);
+  g=(double *)malloc(sizeof(double)*n);
+  w=(double *)malloc(sizeof(double)*n);
+  g[0]=d[0]/b[0];                 //g is y; w is beta
+  w[0]=c[0]/b[0];
+  
+  for(i=1;i<n;i++)
+  {
+	  p=b[i]-a[i]*w[i-1];
+	  g[i]=(d[i]-a[i]*g[i-1])/p;
+	  w[i]=c[i]/p;
+  }
+  ans[n-1]=g[n-1];
+  i=n-2;
+   do
+	 {
+		ans[i]=g[i]-w[i]*ans[i+1];
+		i=i-1;
+	 }
+  while(i>=0);
+  free(g);
+  free(w);
+  return ans;
+}
+

@@ -1,0 +1,56 @@
+// to solve a first order nonlinear diffential equation y'(x)=f(x,y)
+//using 4th order Runge-Kutta method
+
+#include "stdafx.h"
+#include<math.h>
+#include<stdlib.h>
+#include<stdio.h>
+
+void main ( )
+{
+   double a,b,x0,x1,y0,y1,yexact,h,err,k1,k2,k3,k4;
+   int i,N;
+   double exact(double x);
+   double f(double x, double y);
+
+   a=0.0;
+   b=1.0;
+   N=5;
+   h=(b-a)/N;
+   
+   x0=a;
+   y0=1.0;
+   i=1;
+   do
+   {   
+	   x1=x0+h;
+	   k1=h*f(x0,y0);
+	   k2=h*f(x0+0.5*h, y0+0.5*k1);
+	   k3=h*f(x0+0.5*h, y0+0.5*k2);
+	   k4=h*f(x1, y0+k3);
+	   y1=y0+(k1+2*k2+2*k3+k4)/6.0;
+	   yexact=exact(x1);
+	   err=fabs(yexact-y1); 
+	   printf("x=%.2f, num_solution=%.8f,  exact=%.8f,  error=%.8f\n",x1, y1,yexact,err);
+	   i++;
+	   x0=x1;
+	   y0=y1;
+   }
+   while(i<=N);
+}
+
+
+
+double exact(double x)
+{
+	double z;
+	z=sqrt(1+2*x);
+	return z;
+}
+	
+double f(double x, double y)
+{
+	double z;
+	z=y-2*x/y;
+	return z;
+}

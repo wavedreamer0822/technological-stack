@@ -1,0 +1,51 @@
+// dynamic.cpp : 定义控制台应用程序的入口点。
+// to solve first order nonlinear differential equation y'(x)=f(x,y)=x-y+1
+//using a 3-step adam_monlton method
+//the rhs is linear w.r.t. y, so iteration is not necessary.
+
+#include "stdafx.h"
+#include<math.h>
+#include<stdlib.h>
+#include<stdio.h>
+
+void main ( )
+{
+   double a,b,h,*x,*y, yexact,err;
+   int i,N;
+   double exact(double x);
+
+   a=0.0;
+   b=1.0;
+   N=10; 
+   h=(b-a)/N;
+
+   x=(double *)malloc(sizeof(double)*(N+1));
+   for(i=0;i<=N;i++)
+	   x[i]=a+i*h;
+  
+   y=(double *)malloc(sizeof(double)*(N+1)); 
+   for(i=0;i<=2;i++)
+	   y[i]=exact(x[i]);
+
+   for(i=2;i<N;i++)
+   {
+	   y[i+1]=h*(9*x[i+1]+19*x[i]-5*x[i-1]+x[i-2]+(24.0/h-19)*y[i]+5*y[i-1]-y[i-2]+24)/24.0;
+	   y[i+1]=y[i+1]/(1.0+9*h/24);
+	   yexact=exact(x[i+1]);
+	   err=fabs(yexact-y[i+1]); 
+	   printf("x=%.2f, numerical=%.8f, exact=%.8f, error=%3e\n",x[i+1],y[i+1], yexact, err);	
+   }
+
+   free(x);
+   free(y);
+}
+
+
+
+double exact(double x)
+{
+	double z;
+	z=exp(-x)+x;
+	return z;
+}
+	

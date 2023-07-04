@@ -1,0 +1,16 @@
+# Make file for compile and link CHEMKIN Demo
+# Compatible to Mircosoft Fortran Powerstation 4.0 or Digital Fortran 5.0
+# Note: PCMACH.F is used
+
+FC = ifort
+FFLAGS = -c -4R8 -W0 -G5
+LD = ifort
+LDLL = ifort /LD /DDLLOUT
+
+.F.obj :
+	$(FC) $(FFLAGS)  $<
+
+VODETESTOBJ = VODETEST.obj VODE.obj MATH.obj PCMACH.obj
+VODETEST: $(VODETESTOBJ)
+	$(LD) $(VODETESTOBJ)
+
